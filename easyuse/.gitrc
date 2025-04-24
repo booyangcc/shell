@@ -26,6 +26,18 @@ function git_main_branch() {
   echo master
   return 1
 }
+
+function git_current_branch() {
+  local ref
+  ref=$(__git_prompt_git symbolic-ref --quiet HEAD 2> /dev/null)
+  local ret=$?
+  if [[ $ret != 0 ]]; then
+    [[ $ret == 128 ]] && return  # no git repo.
+    ref=$(__git_prompt_git rev-parse --short HEAD 2> /dev/null) || return
+  fi
+  echo ${ref#refs/heads/}
+}
+
 alias g='git'
 alias ga='git add'
 alias gaa='git add --all'
@@ -50,6 +62,7 @@ alias gd='git diff'
 
 alias gct='git commit'
 alias gctm='git commit -m'
+alias gctam='git commit --am'
 
 alias glo='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset"'
 alias glog='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset"'
@@ -59,16 +72,17 @@ alias gm='git merge'
 alias gma='git merge --abort'
 alias gms="git merge --squash"
 
-alias gl='git pull'
-alias glr='git pull --rebase'
-alias glra='git pull --rebase --autostash'
+alias gpl='git pull'
+alias gplr='git pull --rebase'
+alias gplra='git pull --rebase --autostash'
 
-alias glrom='git pull --rebase origin master'
-alias glo='git pull origin "$(git_current_branch)"'
+alias gplrom='git pull --rebase origin master'
+alias gplo='git pull origin "$(git_current_branch)"'
 
 alias gp='git push'
+alias gpf='git push -f'
 alias gpod='git push origin --delete'
-alias gpuo='git push --set-upstream origin' 
+alias gpuo='git push --set-upstream origin $(git_current_branch)' 
 
 
 # 重新基准化分支
