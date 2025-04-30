@@ -1,6 +1,6 @@
 #!/bin/bash
-for rc_file in $(find $(pwd) -name "*rc"); do
-    echo "source $rc_file"
-    source "$rc_file"
-done
+dir="$(cd "$(dirname "$0")" && pwd)"
 
+find "$dir" -name "*profile" | while IFS= read -r rc_file; do
+    . "$rc_file"
+done
